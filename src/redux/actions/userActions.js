@@ -1,9 +1,10 @@
-import { FETCH_USERS, SEARCH_USER, SET_USERS, CREATE_USER, FETCH_USER_BY_ID } from "../actionTypes";
+import { FETCH_USERS, SEARCH_USER, SET_USERS } from "../actionTypes";
 
 
-export const fetchUsers = (page) => ({
+
+export const fetchUsers = (data) => ({
     type: FETCH_USERS,
-    payload: page,
+    payload: { page: data.page, search: data.searchQuery },
 });
 
 export const searchUser = (id) => ({
@@ -11,7 +12,3 @@ export const searchUser = (id) => ({
     payload: id,
 });
 
-export const setUsers = (users) => ({
-    type: SET_USERS,
-    payload: users,
-});

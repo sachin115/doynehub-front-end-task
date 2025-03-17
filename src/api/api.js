@@ -29,8 +29,10 @@ export const loginApi = async (credentials) => {
     return response.data;
 };
 
-export const fetchUsersApi = async (page) => {
-    const response = await api.get(`/get-users?page=${page}`);
+export const fetchUsersApi = async ({ page, search }) => {
+    console.log("API Call - Page:", page, "Search Query:", search);
+
+    const response = await api.get(`/get-users?page=${page}&${search ? `&search=${search}` : ""}`);
     return response.data;
 };
 

@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Container, Table, TableHead, TableRow, TableCell, TableBody, TextField, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { createUser, fetchUsers, searchUser } from '../redux/actions/userActions';
+// src/components/UserList.js
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Container, Table, TableHead, TableRow, TableCell, TableBody, TextField, Button, IconButton, Typography, Card, CardContent, Box, Pagination } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { fetchUsers, searchUser } from "../redux/actions/userActions";
+import { Visibility, Edit, Search } from "@mui/icons-material";
 
 const UserList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
-    const {users} = useSelector((state) => state?.users?.users);
-    console.log("users", users)
-    const [searchId, setSearchId] = useState('');
+    const { users, totalPages } = useSelector((state) => state.users.users);
+    const [searchId, setSearchId] = useState("");
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        dispatch(fetchUsers(page));
+        dispatch(fetchUsers({ page, searchQuery: "" }));
     }, [dispatch, page]);
 
     const handleSearch = () => {
-        if (searchId.trim()) {
-            if (user.role === 'User' && searchId !== user.id) {
-                alert('You can only search for your own profile');
-                return;
-            }
-            dispatch(searchUser(searchId));
+        if (searchId.trim().length === 24) { // Ensuring it's a full MongoDB ObjectId
+            dispatch(fetchUsers({ page, searchQuery: searchId }));
+        } else {
+            alert("Please enter a complete 24-character ID.");
         }
     };
 
@@ -32,46 +31,68 @@ const UserList = () => {
     };
 
     const handleEdit = (id) => {
-        if (user.role === 'Admin') {
+        if (user.role === "Admin") {
             navigate(`/users/edit/${id}`);
         } else {
-            alert('You do not have permission to edit users');
+            alert("You do not have permission to edit users");
         }
     };
 
     return (
         <Container>
-            <TextField label="Search by ID" value={searchId} onChange={(e) => setSearchId(e.target.value)} />
-            <Button onClick={handleSearch} variant="contained" color="primary">Search</Button>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>ID</TableCell>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Email</TableCell>
-                        <TableCell>Role</TableCell>
-                        <TableCell>Actions</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {users?.map((userItem) => (
-                        <TableRow key={userItem._id}>
-                            <TableCell>{userItem._id}</TableCell>
-                            <TableCell>{userItem.name}</TableCell>
-                            <TableCell>{userItem.email}</TableCell>
-                            <TableCell>{userItem.role}</TableCell>
-                            <TableCell>
-                                <Button onClick={() => handleView(userItem._id)} variant="outlined">View</Button>
-                                {user.role === 'Admin' && (
-                                    <Button onClick={() => handleEdit(userItem._id)} variant="outlined" color="secondary">Edit</Button>
-                                )}
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <Button onClick={() => setPage(page - 1)} disabled={page === 1}>Previous</Button>
-            <Button onClick={() => setPage(page + 1)}>Next</Button>
+            <Card sx={{ mt: 4, p: 2, boxShadow: 3, borderRadius: 3 }}>
+                <CardContent>
+                    <Typography variant="h4" gutterBottom>User Management</Typography>
+                    <Box display="flex" alignItems="center" gap={2} mb={2}>
+                        <TextField fullWidth label="Search by Full ID" value={searchId} onChange={(e) => setSearchId(e.target.value)} />
+                        <IconButton onClick={handleSearch} color="primary">
+                            <Search />
+                        </IconButton>
+                        <Button variant="contained" color="secondary" onClick={() => {
+                            setSearchId("");
+                            setPage(1);
+                            dispatch(fetchUsers({ page: 1, searchQuery: "" }));
+                        }}>
+                            Reset
+                        </Button>
+
+                    </Box>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>ID</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Email</TableCell>
+                                <TableCell>Role</TableCell>
+                                <TableCell>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {users?.map((userItem) => (
+                                <TableRow key={userItem._id}>
+                                    <TableCell>{userItem._id}</TableCell>
+                                    <TableCell>{userItem.name}</TableCell>
+                                    <TableCell>{userItem.email}</TableCell>
+                                    <TableCell>{userItem.role}</TableCell>
+                                    <TableCell>
+                                        <IconButton onClick={() => handleView(userItem._id)} color="primary">
+                                            <Visibility />
+                                        </IconButton>
+                                        {user.role === "Admin" && (
+                                            <IconButton onClick={() => handleEdit(userItem._id)} color="secondary">
+                                                <Edit />
+                                            </IconButton>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                    <Box display="flex" justifyContent="center" mt={2}>
+                        <Pagination count={totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
+                    </Box>
+                </CardContent>
+            </Card>
         </Container>
     );
 };

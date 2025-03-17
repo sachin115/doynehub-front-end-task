@@ -9,6 +9,7 @@ import UserList from './components/UserList';
 import ViewUser from './components/ViewUser';
 import EditUser from './components/EditUser';
 import { Container } from '@mui/material';
+import Header from './components/Header';
 
 const ProtectedRoute = ({ element, allowedRoles }) => {
     const dispatch = useDispatch();
@@ -41,6 +42,7 @@ const App = () => {
 
     return (
         <Router>
+          <Header />
             <Container>
                 <Routes>
                     <Route path="/" element={isAuthenticated ? <Navigate to="/users" replace /> : <Register />} />
