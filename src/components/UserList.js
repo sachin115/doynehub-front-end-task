@@ -8,10 +8,10 @@ const UserList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
-    const users = useSelector((state) => state.users.users);
+    const {users} = useSelector((state) => state?.users?.users);
+    console.log("users", users)
     const [searchId, setSearchId] = useState('');
     const [page, setPage] = useState(1);
-    const [newUser, setNewUser] = useState({ name: '', email: '', role: 'User' });
 
     useEffect(() => {
         dispatch(fetchUsers(page));
@@ -24,14 +24,6 @@ const UserList = () => {
                 return;
             }
             dispatch(searchUser(searchId));
-        }
-    };
-
-    const handleCreateUser = () => {
-        if (user.role === 'Admin') {
-            dispatch(createUser(newUser));
-        } else {
-            alert('Only admins can create users');
         }
     };
 
@@ -51,13 +43,6 @@ const UserList = () => {
         <Container>
             <TextField label="Search by ID" value={searchId} onChange={(e) => setSearchId(e.target.value)} />
             <Button onClick={handleSearch} variant="contained" color="primary">Search</Button>
-            {user.role === 'Admin' && (
-                <div>
-                    <TextField label="Name" value={newUser.name} onChange={(e) => setNewUser({ ...newUser, name: e.target.value })} />
-                    <TextField label="Email" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} />
-                    <Button onClick={handleCreateUser} variant="contained" color="secondary">Create User</Button>
-                </div>
-            )}
             <Table>
                 <TableHead>
                     <TableRow>
@@ -69,16 +54,16 @@ const UserList = () => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {users.map((userItem) => (
-                        <TableRow key={userItem.id}>
-                            <TableCell>{userItem.id}</TableCell>
+                    {users?.map((userItem) => (
+                        <TableRow key={userItem._id}>
+                            <TableCell>{userItem._id}</TableCell>
                             <TableCell>{userItem.name}</TableCell>
                             <TableCell>{userItem.email}</TableCell>
                             <TableCell>{userItem.role}</TableCell>
                             <TableCell>
-                                <Button onClick={() => handleView(userItem.id)} variant="outlined">View</Button>
+                                <Button onClick={() => handleView(userItem._id)} variant="outlined">View</Button>
                                 {user.role === 'Admin' && (
-                                    <Button onClick={() => handleEdit(userItem.id)} variant="outlined" color="secondary">Edit</Button>
+                                    <Button onClick={() => handleEdit(userItem._id)} variant="outlined" color="secondary">Edit</Button>
                                 )}
                             </TableCell>
                         </TableRow>

@@ -6,3 +6,4 @@ export const SET_USERS = 'SET_USERS';
 export const SET_AUTH_USER = 'SET_AUTH_USER';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const CREATE_USER = 'CREATE_USER';
+export const FETCH_USER_BY_ID = 'FETCH_USER_BY_ID';

@@ -13,8 +13,8 @@ function* fetchUsersSaga(action) {
 
 function* searchUserSaga(action) {
     try {
-        const users = yield call(searchUserApi, action.payload);
-        yield put({ type: SET_USERS, payload: users });
+        const user = yield call(searchUserApi, action.payload);
+        yield put({ type: SEARCH_USER, payload: user });
     } catch (error) {
         console.error('User search failed', error);
     }

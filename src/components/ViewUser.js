@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { Container, Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { Card, CardContent, Typography, Container, Box } from "@mui/material";
+import { searchUser } from '../redux/actions/userActions';
 
 const ViewUser = () => {
     const { id } = useParams();
-    const users = useSelector((state) => state.users.users);
-    const user = users.find((u) => u.id === id);
+    const dispatch = useDispatch();
+    const {user} = useSelector((state) => state.users);
 
-    if (!user) {
-        return <Typography>User not found</Typography>;
-    }
+    useEffect(() => {
+        if(id){
+        dispatch(searchUser(id))}
+    },[id])
+
+    
+    
 
     return (
-        <Container>
-            <Typography variant="h4">User Details</Typography>
-            <Typography>Name: {user.name}</Typography>
-            <Typography>Email: {user.email}</Typography>
-            <Typography>Role: {user.role}</Typography>
+        <Container maxWidth="sm">
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+                <Card sx={{ maxWidth: 400, width: "100%", boxShadow: 5, borderRadius: 3 }}>
+                    <CardContent>
+                        <Typography variant="h4" textAlign="center" gutterBottom>
+                            User Details
+                        </Typography>
+                        <Typography variant="h6">
+                            <strong>Name:</strong> {user.name}
+                        </Typography>
+                        <Typography variant="h6">
+                            <strong>Email:</strong> {user.email}
+                        </Typography>
+                        <Typography variant="h6">
+                            <strong>Role:</strong> {user.role}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Box>
         </Container>
     );
 };

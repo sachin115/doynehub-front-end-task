@@ -6,8 +6,8 @@ import { TextField, Button, Container, Typography } from '@mui/material';
 const EditUser = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
-    const users = useSelector((state) => state.users.users);
-    const user = users.find((u) => u.id === id);
+    const {users} = useSelector((state) => state.users.users);
+    const user = users.find((u) => u._id === id);
     const [formData, setFormData] = useState(user || { name: '', email: '', role: '' });
 
     const handleChange = (e) => {
