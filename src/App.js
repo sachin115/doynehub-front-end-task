@@ -10,6 +10,7 @@ import ViewUser from './components/ViewUser';
 import EditUser from './components/EditUser';
 import { Container } from '@mui/material';
 import Header from './components/Header';
+import Toast from './components/Toast';
 
 const ProtectedRoute = ({ element, allowedRoles }) => {
     const dispatch = useDispatch();
@@ -42,6 +43,7 @@ const App = () => {
 
     return (
         <Router>
+            <Toast />
           <Header />
             <Container>
                 <Routes>

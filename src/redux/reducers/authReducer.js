@@ -1,4 +1,4 @@
-import { SET_AUTH_USER, LOGOUT_USER } from '../actionTypes';
+import { SET_AUTH_USER, LOGOUT_USER, SHOW_TOAST, HIDE_TOAST } from '../actionTypes';
 import Cookies from 'js-cookie';
 
 const initialState = {
@@ -16,6 +16,10 @@ const authReducer = (state = initialState, action) => {
             Cookies.remove('user');
             Cookies.remove('token');
             return { ...state, user: null, isAuthenticated: false };
+        case SHOW_TOAST:
+            return { ...state, toast: action.payload };
+        case HIDE_TOAST:
+            return { ...state, toast: null };
         default:
             return state;
     }

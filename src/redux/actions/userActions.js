@@ -1,4 +1,4 @@
-import { FETCH_USERS, SEARCH_USER, SET_USERS } from "../actionTypes";
+import { FETCH_USERS, HIDE_TOAST, SEARCH_USER, SHOW_TOAST } from "../actionTypes";
 
 
 
@@ -10,5 +10,14 @@ export const fetchUsers = (data) => ({
 export const searchUser = (id) => ({
     type: SEARCH_USER,
     payload: id,
+});
+
+export const showToast = (message, severity = "info") => ({
+    type: SHOW_TOAST,
+    payload: { message, severity },
+});
+
+export const hideToast = () => ({
+    type: HIDE_TOAST,
 });
 
