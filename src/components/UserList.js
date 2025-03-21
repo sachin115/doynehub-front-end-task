@@ -18,13 +18,13 @@ const UserList = () => {
         dispatch(fetchUsers({ page, searchQuery: "" }));
     }, [dispatch, page]);
 
-    const handleSearch = () => {
-        if (searchId.trim().length === 24) { // Ensuring it's a full MongoDB ObjectId
-            dispatch(fetchUsers({ page, searchQuery: searchId }));
-        } else {
-            alert("Please enter a complete 24-character ID.");
-        }
-    };
+    // const handleSearch = () => {
+    //     if (searchId.trim().length === 24) { // Ensuring it's a full MongoDB ObjectId
+    //         dispatch(fetchUsers({ page, searchQuery: searchId }));
+    //     } else {
+    //         alert("Please enter a complete 24-character ID.");
+    //     }
+    // };
 
     const handleView = (id) => {
         navigate(`/users/${id}`);
@@ -38,25 +38,21 @@ const UserList = () => {
         }
     };
 
+    useEffect(() => {
+        const debounce = setTimeout(() => {
+            dispatch(fetchUsers({ page, searchQuery: searchId }));
+        }, 500);
+
+        return () => clearTimeout(debounce);
+    }, [searchId, page, dispatch]);
+
     return (
         <Container>
             <Card sx={{ mt: 4, p: 2, boxShadow: 3, borderRadius: 3 }}>
                 <CardContent>
                     <Typography variant="h4" gutterBottom>User Management</Typography>
                     <Box display="flex" alignItems="center" gap={2} mb={2}>
-                        <TextField fullWidth label="Search by Full ID" value={searchId} onChange={(e) => setSearchId(e.target.value)} />
-                        <IconButton onClick={handleSearch} color="primary">
-                            <Search />
-                        </IconButton>
-                        <Button variant="contained" color="secondary" onClick={() => {
-                            setSearchId("");
-                            setPage(1);
-                            dispatch(fetchUsers({ page: 1, searchQuery: "" }));
-                        }}>
-                            Reset
-                        </Button>
-
-                    </Box>
+                        <TextField fullWidth label="Search by Full ID" value={searchId} onChange={(e) => setSearchId(e.target.value)} /></Box>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -68,25 +64,34 @@ const UserList = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {users?.map((userItem) => (
-                                <TableRow key={userItem._id}>
-                                    <TableCell>{userItem._id}</TableCell>
-                                    <TableCell>{userItem.name}</TableCell>
-                                    <TableCell>{userItem.email}</TableCell>
-                                    <TableCell>{userItem.role}</TableCell>
-                                    <TableCell>
-                                        <IconButton onClick={() => handleView(userItem._id)} color="primary">
-                                            <Visibility />
-                                        </IconButton>
-                                        {user.role === "Admin" && (
-                                            <IconButton onClick={() => handleEdit(userItem._id)} color="secondary">
-                                                <Edit />
+                            {users && users.length > 0 ? (
+                                users.map((userItem) => (
+                                    <TableRow key={userItem._id}>
+                                        <TableCell>{userItem._id}</TableCell>
+                                        <TableCell>{userItem.name}</TableCell>
+                                        <TableCell>{userItem.email}</TableCell>
+                                        <TableCell>{userItem.role}</TableCell>
+                                        <TableCell>
+                                            <IconButton onClick={() => handleView(userItem._id)} color="primary">
+                                                <Visibility />
                                             </IconButton>
-                                        )}
+                                            {user.role === "Admin" && (
+                                                <IconButton onClick={() => handleEdit(userItem._id)} color="secondary">
+                                                    <Edit />
+                                                </IconButton>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} align="center">
+                                        No records found.
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
+
                     </Table>
                     <Box display="flex" justifyContent="center" mt={2}>
                         <Pagination count={totalPages} page={page} onChange={(event, value) => setPage(value)} color="primary" />
